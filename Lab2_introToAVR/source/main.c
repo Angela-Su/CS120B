@@ -44,6 +44,9 @@ while(1) {
 	if(tempD != 0x08){
 		cntavail++;
 	}
+	if(cntavail == 0){
+		cntavail = 0x80; //this is 1000 0000;
+	}
 	PORTC = cntavail;
 	cntavail = 0;
 }

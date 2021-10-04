@@ -40,8 +40,8 @@ while(1) {
 		tempD = tempD + 0x02;
 	}
 	unsigned char tempTotal = 0x00;
-	tempTotal = A+B+C & 0xFC;
-	tempTotal = tempD + tempTotal;
+	tempTotal = ((A+B+C) & 0xFC) >> 2;
+	tempTotal = tempTotal + tempD;
 
 	PORTD = tempTotal;
 }

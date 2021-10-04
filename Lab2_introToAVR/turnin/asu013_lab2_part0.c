@@ -1,7 +1,7 @@
 /*	Author: Angela Su
  *  Partner(s) Name: N/A
  *	Lab Section: 022
- *	Assignment: Lab #2  Exercise #1
+ *	Assignment: Lab #2  Exercise #0
  *	Exercise Description: [optional - include for your own benefit]
  *
  *	I acknowledge all content contained herein, excluding template or example
@@ -19,15 +19,15 @@ int main(void) {
 	unsigned char tmpA = 0x00; // Temporary variable to hold the value of A
 while(1) {
 		// 1) Read input
-		tmpA = PINA & 0x03; //gives me right most 2 bits 0000 0011
+		tmpA = PINA & 0x01;
 		// 2) Perform computation
-		// if PA0 is 1 and PA1 is 0, then PB0 = 1; else PB0 = 0
-		if (tmpA == 0x01) {
-			tmpB = 0x01; // Sets tmpB to bbbbbbb1
-
+		// if PA0 is 1, set PB1PB0 = 01, else = 10
+		if (tmpA == 0x01) { // True if PA0 is 1
+			tmpB = (tmpB & 0xFC) | 0x01; // Sets tmpB to bbbbbb01
+							 // (clear rightmost 2 bits, then set to 01)
 		} else {
-			tmpB = 0x00; // Sets tmpB to bbbbbbb0
-
+			tmpB = (tmpB & 0xFC) | 0x02; // Sets tmpB to bbbbbb10
+							 // (clear rightmost 2 bits, then set to 10)
 		}	
 	// 3) Write output
 PORTB = tmpB;	

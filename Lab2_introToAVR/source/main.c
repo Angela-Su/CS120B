@@ -26,24 +26,23 @@ int main(void) {
 	unsigned char B = 0x00;
 	unsigned char C = 0x00;
 	unsigned char tempD = 0x00;
+	unsigned char tempTotal = 0x00;
 
 while(1) {
 	A = PINA;
 	B = PINB;
-	C = PINC; 
-	tempD = 0x00;
+	C = PINC;
+	
 
 	if((A + B + C) > 0x8C ){ //check total weight doesnt exceed 140 = 0x8C
-		tempD = 0x01;
+		tempD = tempD | 0x01;
 	}
-	if(((A-C)|(C-A)) > 0x50){ // check that it's not difference of 80+
-		tempD = tempD + 0x02;
+	if(((A-C) > 0x50)||((C-A) > 0x50)){ // check that it's not difference of 80+
+		tempD = tempD | 0x02;
 	}
-	unsigned char tempTotal = 0x00;
-	tempTotal = ((A+B+C) & 0xFC) >> 2;
-	tempTotal = tempTotal + tempD;
-
-	PORTD = tempTotal;
+	
+	PORTD = (((A+B+C) >> 2) & 0x00FC) | tempD;
+	tempD = 0x00;
 }
 	return 0;
 }

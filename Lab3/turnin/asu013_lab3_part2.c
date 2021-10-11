@@ -30,7 +30,7 @@ int main(void) {
 while(1) {
 	A = PINA & 0x0F;
 	//B = PINB;
-	C = 0x00;
+	C = 0x40;
 	
 	switch(A){
 		case 1 :

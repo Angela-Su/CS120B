@@ -50,8 +50,10 @@ void Tick(){
 			if ((PINA & 0x07) == 0x04) {
                                 state = Unlock_Bolt;
                         }
+			else if(PINA & 0x07) == 0){
+				state = Unlock;
                         else {
-                                state = Unlock;
+                                state = Initial;
                         }
                         break;
 		case Unlock:

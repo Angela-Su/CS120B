@@ -31,7 +31,6 @@ int main(void) {
 enum States{Start, Inital, Unlock_Bolt, Unlock, Release, Locked} state;
 
 void Tick(){
-switch(state) {
 	switch(state) {
 		case Start:
 			state = Initial;

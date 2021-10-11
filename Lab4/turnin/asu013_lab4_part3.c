@@ -31,7 +31,6 @@ int main(void) {
 enum States{Start, Inital, Unlock_Bolt, Unlock, Release, Locked} state;
 
 void Tick(){
-switch(state) {
 	switch(state) {
 		case Start:
 			state = Initial;
@@ -51,8 +50,10 @@ switch(state) {
 			if ((PINA & 0x07) == 0x04) {
                                 state = Unlock_Bolt;
                         }
+			else if(PINA & 0x07) == 0){
+				state = Unlock;
                         else {
-                                state = Unlock;
+                                state = Initial;
                         }
                         break;
 		case Unlock:

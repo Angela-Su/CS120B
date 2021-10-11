@@ -27,7 +27,7 @@ int main(void) {
 	return 0;
 }
 
-enum States{Start, Press, Inital, Reset, Plus, Minus, Plus_On, Minus_On} state;
+enum States{Start, Press, Initial, Reset, Plus, Minus, Plus_On, Minus_On} state;
 
 void Tick(){
 switch(state) {
@@ -35,17 +35,17 @@ switch(state) {
 		state = Press;
 		break;
 	case Press:
-		state = Inital;
+		state = Initial;
 		break;
 	case Initial:
 		if ((PINA & 0x03) == 0x03) {
 			state = Reset;
 		}
 		else if ((PINA & 0x01) == 0x01) {
-			state = PlusOn;
+			state = Plus_On;
 		}
 		else if ((PINA & 0x02) == 0x02) {
-			state = MinusOn;
+			state = Minus_On;
 		}
 		break;
 	case Reset:
@@ -53,7 +53,7 @@ switch(state) {
 			state = Reset;
 		}
 		else {
-			state = Init;
+			state = Initial;
 		}
 		break;
 	case Plus:
@@ -61,7 +61,7 @@ switch(state) {
 			state = Plus;
 		}
 		else {
-			state = Init;
+			state = Initial;
 		}
 		break;
 	case Plus_On:
@@ -72,7 +72,7 @@ switch(state) {
 			state = Minus;
 		}
 		else {
-			state = Init;
+			state = Initial;
 		}
 		break;
 	case Minus_On:

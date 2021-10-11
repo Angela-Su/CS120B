@@ -19,7 +19,7 @@
 
 int main(void) {
 	//DDRA = 0x00; PORTA = 0xFF; // Configure port A's 8 pins as inputs
-	DDRB = 0xFE; PORTB = 0x01; // this gives us 1111 1110
+	DDRB = 0x01; PORTB = 0x00; // this gives us 1111 1110
 	DDRD = 0x00; PORTD = 0xFF; 
 
 	unsigned short temp = 0x00; // used for shifting 
@@ -30,8 +30,11 @@ while(1) {
 	if(temp >= 70){
 		PORTB = answer | 0x02;
 	}
-	if((temp > 5) && (temp <70)){
-		PORTB = answer | 0x04;
+	else if((temp > 5)){
+		PORTB = 0x04;
+	}
+	else{
+		PORTB = 0x00;
 	}
 	temp = 0;
 	answer = 0;

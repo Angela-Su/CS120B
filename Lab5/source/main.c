@@ -29,7 +29,7 @@ int main(void) {
 	unsigned char tempA = 0x00;
 	unsigned char result = 0x00;
 	
-		State = Init;
+	States = Start;
 	while(1){
 		Tick();
     	}
@@ -39,85 +39,86 @@ int main(void) {
 
 void Tick(){
 	unsigned char temp = ~PINA & 0x03;
-        switch(State){
+        switch(States){
+                case Start:
+                        States = Init;
+                        break;
                 case Init:
-                        State = SM_Init2;
+                        States = StartProg;
                         break;
-                case SM_Init2:
-                        State = SM_Start;
-                        break;
-                case SM_Start:
+                case StartProg:
                         if(temp == 0x01){
-                                if(counter < 0x09){
-                                        counter++;
+                                if(iterator < 0x09){
+                                        iterator++;
                                 }
-				State = SM_Inc;
-                        } else if(temp == 0x02){
-                                if(counter > 0x00){
-                                        counter--;
+								States = Increase;
+                        } 
+						else if(temp == 0x02){
+                                if(iterator > 0x00){
+                                        iterator--;
                                 }
-                                State = SM_Dec;
+                                States = Decrease;
                         } else if(temp == 0x03){
-                                State = SM_Reset;
+                                States = Reset;
                         } else {
-                                State = SM_Start;
+                                States = StartProg;
                         }
                         break;
-                case SM_Inc:
+                case Increase:
                         if(temp == 0x01){
-                                State = SM_Inc;
+                                States = Increase;
                         } else if(temp == 0x03){
-                                State = SM_Reset;
+                                States = Reset;
                         } else {
-                                State = SM_Start;
+                                States = StartProg;
                         }
                         break;
-                case SM_Dec:
+                case Decrease:
                         if(temp == 0x02){
-                                State = SM_Dec;
+                                States = Decrease;
                         } else if(temp == 0x03){
                                 counter = 0x00;
-                                State = SM_Reset;
+                                States = Reset;
                         } else {
-                                State = SM_Start;
+                                States = StartProg;
                         }
                         break;
-                case SM_Reset:
+                case Reset:
                         if(temp == 0x03){
-                                State = SM_Reset;
+                                States = Reset;
                         } else if(temp == 0x01){
-                                State = SM_Inc;
+                                States = Increase;
                         } else if(temp == 0x02){
-                                State = SM_Dec;
+                                States = Decrease;
                         } else {
-                                State = SM_Start;
+                                States = StartProg;
                         }
                         break;
                 default:
-                        State = SM_Init2;
+                        States = Init;
                         break;
         }
-        switch (SM_STATE){
-                case SM_Init:
+        switch (States){
+                case Start:
                         break;
-		case SM_Init2:
-			counter = 0x07;
+		case Init:
+			iterator = 0x07;
                         PORTC = 0x07;
 			break;
-                case SM_Start:
-			PORTC = counter;
+                case StartProg:
+			PORTC = iterator;
 			if(temp == 0x01){
 				PORTC += 1;
 			}
                         break;
-                case SM_Inc:
-                        PORTC = counter;
+                case Increase:
+                        PORTC = iterator;
                         break;
-                case SM_Dec:
-                        PORTC = counter;
+                case Decrease:
+                        PORTC = iterator;
                         break;
-                case SM_Reset:
-                        counter = 0x00;
+                case Reset:
+                        iterator = 0x00;
                         PORTC = 0x00;
                         break;
                 default:

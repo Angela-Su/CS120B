@@ -77,7 +77,7 @@ void Tick(){
                         if(temp == 0x02){
                                 States = Decrease;
                         } else if(temp == 0x03){
-                                counter = 0x00;
+                                iterator = 0x00;
                                 States = Reset;
                         } else {
                                 States = StartProg;

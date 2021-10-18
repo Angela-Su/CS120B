@@ -1,13 +1,10 @@
 /*	Author: Angela Su
  *  Partner(s) Name: N/A
  *	Lab Section: 022
- *	Assignment: Lab #5  Exercise #2
- *	Exercise Description:  Buttons are connected to PA0 and PA1. Output for PORTC is initially 
- *	7. Pressing PA0 increments PORTC (stopping at 9). Pressing PA1 decrements PORTC (stopping 
- *	at 0). If both buttons are depressed (even if not initially simultaneously), PORTC resets 
- *	to 0. If a reset occurs, both buttons should be fully released before additional 
- *	increments or decrements are allowed to happen. Use LEDs (and resistors) on PORTC. Use a 
- *	state machine (not synchronous) captured in C. 
+ *	Assignment: Lab #5  Exercise #3
+ *	Exercise Description:  Create your own festive lights display with 6 LEDs connected to port PB5..PB0, 
+ *	lighting in some attractive sequence. Pressing the button on PA0 changes the lights to the next 
+ *	configuration in the sequence.  Use a state machine (not synchronous) captured in C. 
  *
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
@@ -17,14 +14,13 @@
 #include "simAVRHeader.h"
 #endif
 
-unsigned char iterator = 0x00;
-enum States{Start, Init, StartProg, Increase, Decrease, Reset} States;
+enum States{Start, Init, Wait0, Press1, Wait1, Press2, Wait2, Press3, Wait3, Press4, Wait4} States;
 void Tick();
 
 int main(void) {
 	DDRA = 0x00; PORTA = 0xFF; // Configure port A's 8 pins as inputs
-	//DDRB = 0xFF; PORTB = 0x00; // output
-	DDRC = 0xFF; PORTC = 0x00; // output
+	DDRB = 0xFF; PORTB = 0x00; // output
+	//DDRC = 0xFF; PORTC = 0x00; // output
 	
 	States = Start;
 	while(1){
@@ -35,88 +31,113 @@ int main(void) {
 }
 
 void Tick(){
-	unsigned char temp = ~PINA & 0x03;
+	unsigned char temp = ~PINA & 0x01;
         switch(States){
                 case Start:
                         States = Init;
                         break;
                 case Init:
-                        States = StartProg;
-                        break;
-                case StartProg:
-                        if(temp == 0x01){
-                                if(iterator < 0x09){
-                                        iterator++;
-                                }
-								States = Increase;
-                        } 
-						else if(temp == 0x02){
-                                if(iterator > 0x00){
-                                        iterator--;
-                                }
-                                States = Decrease;
-                        } else if(temp == 0x03){
-                                States = Reset;
+                        if(temp){
+                                States = Wait0;
                         } else {
-                                States = StartProg;
+                                States = Init;
                         }
                         break;
-                case Increase:
-                        if(temp == 0x01){
-                                States = Increase;
-                        } else if(temp == 0x03){
-                                States = Reset;
+                case Wait0:
+                        if(temp){
+                                States = Wait0;
                         } else {
-                                States = StartProg;
+                                States = Press1;
                         }
                         break;
-                case Decrease:
-                        if(temp == 0x02){
-                                States = Decrease;
-                        } else if(temp == 0x03){
-                                iterator = 0x00;
-                                States = Reset;
+                case Press1:
+                        if(temp){
+                                States = Wait1;
                         } else {
-                                States = StartProg;
+                                States = Press1;
                         }
                         break;
-                case Reset:
-                        if(temp == 0x03){
-                                States = Reset;
-                        } else if(temp == 0x01){
-                                States = Increase;
-                        } else if(temp == 0x02){
-                                States = Decrease;
+                case Wait1:
+                        if(temp){
+                                States = Wait1;
                         } else {
-                                States = StartProg;
+                                States = Press2;
+                        }
+                        break;
+                case Press2:
+                        if(temp){
+                                States = Wait2;
+                        } else {
+                                States = Press2;
+                        }
+                        break;
+                case Wait2:
+                        if(temp){
+                                States = Wait2;
+                        } else {
+                                States = Press3;
+                        }
+                        break;
+                case Press3:
+                        if(temp){
+                                States = Wait3;
+                        } else {
+                                States = Press3;
+                        }
+                        break;
+                case Wait3:
+                        if(temp){
+                                States = Wait3;
+                        } else {
+                                States = Press4;
+                        }
+                        break;
+                case Press4:
+                        if(temp){
+                                States = Wait4;
+                        } else {
+                                States = Press4;
+                        }
+                        break;
+                case Wait4:
+                        if(temp){
+                                States = Wait4;
+                        } else {
+                                States = Init;
                         }
                         break;
                 default:
                         States = Init;
                         break;
         }
-        switch (States){
+		switch(States){
                 case Start:
+                        PORTB = 0x00;
                         break;
-		case Init:
-			iterator = 0x07;
-                        PORTC = 0x07;
-			break;
-                case StartProg:
-			PORTC = iterator;
-			if(temp == 0x01){
-				PORTC += 1;
-			}
+                case Init:
                         break;
-                case Increase:
-                        PORTC = iterator;
+                case Wait0:
+                        PORTB = 0x15;
                         break;
-                case Decrease:
-                        PORTC = iterator;
+                case Press1:
                         break;
-                case Reset:
-                        iterator = 0x00;
-                        PORTC = 0x00;
+                case Wait1:
+                        PORTB = 0x00;
+                        break;
+                case Press2:
+                        break;
+                case Wait2:
+                        PORTB = 0x2A;
+                        break;
+                case Press3:
+                        break;
+                case Wait3:
+                        PORTB = 0x00;
+                        break;
+                case Press4:
+                        break;
+                case Wait4:
+                        PORTB = 0x3F;
                         break;
                 default:
                         break;

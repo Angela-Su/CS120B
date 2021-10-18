@@ -8,6 +8,8 @@
  *
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
+ *      Demo: https://www.tiktok.com/@confused.asian/video/7020237876759678213?is_copy_url=0&is_from_webapp=v1&lang=en&sender_device=pc&sender_web_id=7020238378064250374
+ *            https://drive.google.com/file/d/1JSoT_ImsXj83ZpNKywg6JtKICD3MLaVw/view?usp=sharing
  */
 #include <avr/io.h>
 #ifdef _SIMULATE_

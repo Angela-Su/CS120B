@@ -25,9 +25,6 @@ int main(void) {
 	DDRA = 0x00; PORTA = 0xFF; // Configure port A's 8 pins as inputs
 	//DDRB = 0xFF; PORTB = 0x00; // output
 	DDRC = 0xFF; PORTC = 0x00; // output
-
-	unsigned char tempA = 0x00;
-	unsigned char result = 0x00;
 	
 	States = Start;
 	while(1){

@@ -1,18 +1,16 @@
 /*	Author: lab
  *  Partner(s) Name: 
  *	Lab Section:
- *	Assignment: Lab #7  Exercise # Hello World
- *	Exercise Description: Buttons are connected to PA0 and PA1. Output PORTC and PORTD drive 
- *	the LCD display, initially displaying 0. Pressing PA0 increments the display (stopping at 
- *	9). Pressing PA1 decrements the display (stopping at 0). If both buttons are depressed 
- *	(even if not initially simultaneously), the display resets to 0. If a button is held, 
- *	then the display continues to increment (or decrement) at a rate of once per second. Use 
- *	a synchronous state machine captured in C.
+ *	Assignment: Lab #7  Exercise # 2
+ *	Exercise Description: Extend the earlier light game to maintain a score on the LCD 
+ *	display. The initial score is 5. Each time the user presses the button at the right time 
+ *	(the middle LED), the score increments. Each time the user fails, the score decrements. 
+ *	When reaching 9, show victory somehow. 
  *
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
  *
- *	Demo Link: https://drive.google.com/file/d/1LQyb98C5jmLamT9jExEw1r3x_H4zmeP4/view?usp=sharing
+ *	Demo Link: 
  */
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -59,63 +57,125 @@ void TimerSet(unsigned long M){
         _avr_timer_cntcurr = _avr_timer_M;
 }
 
-enum State{Start, Count, Wait} State;
+enum State{ Start, Light1, Light2, Light3, Press, Wait1, Wait2 } State;
 
 void Tick();
 
-unsigned char counter = 0;
+unsigned char counter = 5;
+
 int main(void) {
     /* Insert DDR and PORT initializations */
 	DDRA = 0x00; PORTA = 0xFF;
-	DDRC = 0xFF; PORTC = 0x00;
-	DDRD = 0xFF; PORTD = 0x00;
+	DDRB = 0xFF; PORTB = 0x00;
+	
     /* Insert your solution below */
-
-	TimerSet(100);
+	TimerSet(300);
         TimerOn();
-
+        
 	State = Start;
 	LCD_init();
 	LCD_ClearScreen();
 	LCD_Cursor(1);
-    while (1) {
-	Tick();
-	LCD_WriteData(counter + '0'); // will display # on the LCD
-	while(!TimerFlag);
+
+    	while (1) {
+		Tick();
+		LCD_WriteData(counter + '0');
+		while(!TimerFlag);
 		TimerFlag = 0;
-    }
+    	}
     return 1;
 }
 
 void Tick(){
 	LCD_ClearScreen();
-	unsigned char button1 = ~PINA & 0x01;
-	unsigned char button2 = ~PINA & 0x02;
-	switch(State){
-		case Start:
-			State = Count;
-			break;
-		case Count:
-			if(button1 && !button2 && counter != 9){ //increase
-				counter++;
-			}
-			else if(button2 && !button1 && counter != 0){ //decrease
-				counter--;
-			}
-			else if(button1 && button2){
-				counter = 0;
-			}
-			else{
-				State = Count;
-			}
-			State = Wait;
-			break;
-		case Wait:
-			State = Count;
-			break;
-		default:
-			State = Start;
-			break;
-	}
-}
+	unsigned char temp = ~PINA & 0x01;
+        switch(State){
+                case Start:
+                        State = Light1;
+                        break;
+                case Light1:
+                        if(temp){
+				if(counter != 0){
+					counter--;
+				}
+                                State = Wait1;
+                        } 
+			else {
+                                State = Light2;
+                        }
+                        break;
+                case Light2:
+                        if(temp){
+				if(counter == 9){
+					LCD_DisplayString(1, "VICTORY!");
+					counter = 5;
+				}
+				else{
+					counter++;
+				}
+                                State = Wait1;
+                        } 
+			else {
+                                State = Light3;
+                        }
+                        break;
+                case Light3:
+                        if(temp){
+				if(counter != 0){
+					counter--;
+				}
+                                State = Wait1;
+                        } 
+			else {
+                                State = Light1;
+                        }
+                        break;
+                case Wait1:
+                        if(temp){
+                                State = Wait1;
+                        } 
+			else {
+                                State = Press;
+                        }
+                        break;
+                case Press:
+                        if(temp){
+                                State = Wait2;
+                        } 
+			else {
+                                State = Press;
+                        }
+                        break;
+                case Wait2:
+                        if(temp){
+                                State = Wait2;
+                        } 
+			else {
+                                State = Start;
+                        }
+                default:
+                        State = Start;
+                        break;
 
+        }
+        switch(State){
+                case Start:
+                        PORTB = 0x00;
+                        break;
+                case Light1:
+                        PORTB = 0x01;
+                        break;
+                case Light2:
+                        PORTB = 0x02;
+                        break;
+                case Light3:
+                        PORTB = 0x04;
+                        break;
+                case Wait1:
+                        break;
+                case Wait2:
+                        break;
+                default:
+                        break;
+        }
+}

@@ -1,6 +1,6 @@
-/*	Author: lab
+/*	Author: Angela 
  *  Partner(s) Name: 
- *	Lab Section:
+ *	Lab Section: 022
  *	Assignment: Lab #7  Exercise # 2
  *	Exercise Description: Extend the earlier light game to maintain a score on the LCD 
  *	display. The initial score is 5. Each time the user presses the button at the right time 
@@ -13,169 +13,134 @@
  *	Demo Link: 
  */
 #include <avr/io.h>
+#include "io.h"
 #include <avr/interrupt.h>
 #ifdef _SIMULATE_
 #include "simAVRHeader.h"
-#include "io.h"
 #endif
-
+enum States {Start, Init, NextLed, Pause, Restart1/*, Restart2*/} state;
+unsigned char alternate = 0x00;
+unsigned char score = 0x05;
 volatile unsigned char TimerFlag = 0;
-
+void TimerISR() { TimerFlag = 1;}
 unsigned long _avr_timer_M = 1;
 unsigned long _avr_timer_cntcurr = 0;
-
-void TimerOn(){
-        TCCR1B = 0x0B;
-        OCR1A = 125;
-        TIMSK1 = 0x02;
-
-        TCNT1 = 0;
-
-        _avr_timer_cntcurr = _avr_timer_M;
-
-        SREG |= 0x80;
+void TimerOn() {
+	TCCR1B = 0x0B;
+	OCR1A = 125;
+	TIMSK1 = 0x02;
+	TCNT1 = 0;
+	_avr_timer_cntcurr = _avr_timer_M;
+	SREG |= 0x80;
+}
+void TimerOff() {
+	TCCR1B = 0x00;
+}
+ISR(TIMER1_COMPA_vect) {
+	_avr_timer_cntcurr--;
+	if (_avr_timer_cntcurr == 0) {
+		TimerISR();
+		_avr_timer_cntcurr = _avr_timer_M;
+	}
+}
+void TimerSet (unsigned long M) {
+	_avr_timer_M = M;
+	_avr_timer_cntcurr = _avr_timer_M;
 }
 
-void TimerOff(){
-        TCCR1B = 0x00;
-}
-
-void TimerISR(){
-        TimerFlag = 1;
-}
-
-ISR(TIMER1_COMPA_vect){
-        _avr_timer_cntcurr--;
-        if(_avr_timer_cntcurr == 0){
-                TimerISR();
-                _avr_timer_cntcurr = _avr_timer_M;
+void Tick() {
+	if (score == 0x00) {
+		LCD_DisplayString(1, "0");
+	}
+	else if (score == 0x01) {
+		LCD_DisplayString(1, "1");
+	}
+	else if (score == 0x02) {
+                LCD_DisplayString(1, "2");
         }
-}
-
-void TimerSet(unsigned long M){
-        _avr_timer_M = M;
-        _avr_timer_cntcurr = _avr_timer_M;
-}
-
-enum State{ Start, Light1, Light2, Light3, Press, Wait1, Wait2 } State;
-
-void Tick();
-
-unsigned char counter = 5;
-
-int main(void) {
-    /* Insert DDR and PORT initializations */
-	DDRA = 0x00; PORTA = 0xFF;
-	DDRB = 0xFF; PORTB = 0x00;
-	
-    /* Insert your solution below */
-	TimerSet(300);
-        TimerOn();
-        
-	State = Start;
-	LCD_init();
-	LCD_ClearScreen();
-	LCD_Cursor(1);
-
-    	while (1) {
-		Tick();
-		LCD_WriteData(counter + '0');
-		while(!TimerFlag);
-		TimerFlag = 0;
-    	}
-    return 1;
-}
-
-void Tick(){
-	LCD_ClearScreen();
-	unsigned char temp = ~PINA & 0x01;
-        switch(State){
-                case Start:
-                        State = Light1;
-                        break;
-                case Light1:
-                        if(temp){
-				if(counter != 0){
-					counter--;
-				}
-                                State = Wait1;
-                        } 
-			else {
-                                State = Light2;
-                        }
-                        break;
-                case Light2:
-                        if(temp){
-				if(counter == 9){
-					LCD_DisplayString(1, "VICTORY!");
-					counter = 5;
-				}
-				else{
-					counter++;
-				}
-                                State = Wait1;
-                        } 
-			else {
-                                State = Light3;
-                        }
-                        break;
-                case Light3:
-                        if(temp){
-				if(counter != 0){
-					counter--;
-				}
-                                State = Wait1;
-                        } 
-			else {
-                                State = Light1;
-                        }
-                        break;
-                case Wait1:
-                        if(temp){
-                                State = Wait1;
-                        } 
-			else {
-                                State = Press;
-                        }
-                        break;
-                case Press:
-                        if(temp){
-                                State = Wait2;
-                        } 
-			else {
-                                State = Press;
-                        }
-                        break;
-                case Wait2:
-                        if(temp){
-                                State = Wait2;
-                        } 
-			else {
-                                State = Start;
-                        }
-                default:
-                        State = Start;
-                        break;
-
+	else if (score == 0x03) {
+                LCD_DisplayString(1, "3");
         }
-        switch(State){
-                case Start:
-                        PORTB = 0x00;
-                        break;
-                case Light1:
-                        PORTB = 0x01;
-                        break;
-                case Light2:
-                        PORTB = 0x02;
-                        break;
-                case Light3:
-                        PORTB = 0x04;
-                        break;
-                case Wait1:
-                        break;
-                case Wait2:
-                        break;
-                default:
-                        break;
+	else if (score == 0x04) {
+                LCD_DisplayString(1, "4");
         }
+	else if (score == 0x05) {
+                LCD_DisplayString(1, "5");
+        }
+	else if (score == 0x06) {
+                LCD_DisplayString(1, "6");
+        }
+	else if (score == 0x07) {
+                LCD_DisplayString(1, "7");
+        }
+	else if (score == 0x08) {
+                LCD_DisplayString(1, "8");
+        }
+	else if (score == 0x09) {
+                LCD_DisplayString(1, "9");
+		LCD_DisplayString(2, "VICTORY!!!");
+        }
+
+	switch(state) {
+		case Start:	state = Init; break;
+		case Init:	state = NextLed; break;
+		case NextLed:	if ((~PINA & 0x01) == 0x01) {state = Pause;}
+				else {state = NextLed;}
+			       	break;
+		case Pause:	if ((~PINA & 0x01) == 0x01) {state = Pause;}
+				else {state = Restart1;}
+				break;
+		case Restart1:	if ((~PINA & 0x01) == 0x01) {state = Init;}
+				else {state = Restart1;}
+				break;
+		/*case Restart2:	if ((~PINA & 0x01) == 0x01) {state = Restart2;}
+				else {state = NextLed;}
+				break;*/
+		default:	state = Start; break;
+	}
+	switch (state) {
+		case Start:     score = 0x05;break;
+                case Init:      PORTB = 0x01; break;
+		case NextLed:
+			if (alternate == 0x00) {
+				if (PORTB == 0x04) {
+					PORTB = PORTB >> 1;
+					alternate = 0x01;
+				}
+				else {
+					PORTB = PORTB << 1;
+				}
+			}
+			else {
+				if (PORTB == 0x01) {
+                                        PORTB = PORTB << 1;
+                                        alternate = 0x00;
+                                }
+                                else {
+                                        PORTB = PORTB >> 1;
+                                }
+			}
+			break;
+		case Pause: 	if (PORTB == 0x02) { ++score;}
+				else {--score;} 
+				break;
+		case Restart1:	break;
+		/*case Restart2: 	break;*/
+                default:        break;
+	}
+}
+
+void main(void) {
+    DDRA = 0x00; PORTA = 0xFF;
+    DDRB = 0xFF; PORTB = 0x00;
+    DDRC = 0xFF; PORTC = 0x00;
+    DDRD = 0xFF; PORTD = 0x00;
+    TimerSet(300);
+    TimerOn();
+    LCD_init();
+    while (1) {
+	Tick();
+	while(!TimerFlag) {};
+	TimerFlag = 0;
+    }
 }

@@ -1,7 +1,7 @@
 /*	Author: Angela Su
  *  Partner(s) Name: 
  *	Lab Section: 022
- *	Assignment: Lab 9  Exercise 2
+ *	Assignment: Lab 9  Exercise 3
  *	Exercise Description: Using the ATmega1284’s built in PWM functionality, design a system 
  *	where a short, five-second melody, is played when a button is pressed. NOTE: The melody 
  *	must be somewhat complex (scaling from C to B is NOT complex). Criteria:
@@ -9,6 +9,7 @@
  *	Pressing the button again in the middle of the melody should do nothing
  *	If the button is pressed and held, when the melody finishes, it should not repeat until 
  *	the button is released and pressed again
+ *	Demo Link: https://drive.google.com/file/d/1N2M5xAW0iOZgXoKMedTdASMyLbsdQyNH/view?usp=sharing
  *
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
@@ -95,8 +96,8 @@ void TimerSet(unsigned long M)
     _avr_timer_cntcurr = _avr_timer_M;
 }
 
-double melodies[24] = { 329.63, 349.23, 392, 493.88, 440, 392, 392, 0
-                        440, 392, 349.23, 349.23, 0, 349.23, 0, 349.23, 0, 349.23, 0, 349.23
+double melodies[27] = { 329.63, 329.63, 349.23, 349.23, 392, 392, 493.88, 440, 392, 392, 0,
+                        440, 392, 349.23, 349.23, 0, 349.23, 0, 349.23, 0, 349.23, 0, 349.23,
                         392, 349.23, 329.63, 329.63};
 int counter = 0;
 
@@ -116,7 +117,7 @@ void Tick_Func(){
                         }
                         break;
                 case SM_Melody:
-                        if(counter < 24){
+                        if(counter < 27){
                                 SM_STATE = SM_Melody;
                         } 
 			else {

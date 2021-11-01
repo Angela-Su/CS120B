@@ -6,7 +6,7 @@
  *	of how much light is detected. For example, when more light is detected, more LEDs are illuminated. 
  *	Criteria: The LEDs should illuminated in sequence from 0 to 7, based on the amount of light detected by the photoresistor.
  *
- *	Demo Link:
+ *	Demo Link: https://drive.google.com/file/d/1MbvwXl9wQxxwGkwnDZ2nEOp-WVpQ7WLP/view?usp=sharing
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
  */

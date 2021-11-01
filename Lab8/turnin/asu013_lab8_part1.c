@@ -2,12 +2,10 @@
  *  Partner(s) Name: 
  *	Lab Section:022
  *	Assignment: Lab 8  Exercise 2
- *	Exercise Description: Revise exercise 1 by replacing the potentiometer with a 
- *	photoresistor and 330 ohm resistor. Take note of the highest ADC value displayed (MAX) 
- *	when the photoresistor is exposed to light, and the lowest ADC value displayed (MIN) when 
- *	the photoresistor is deprived of all light. These values will be used for the remaining 
- *	lab exercises.
-
+ *	Exercise Description: Make sure your breadboard is wired according to the prelab. The potentiometer is used 
+ *	to adjust the voltage supplied to the microcontroller for ADC . Design a system that reads the 10-bit ADC 
+ *	result from the ADC register, and displays the result on a bank of 10 LEDs.
+ *	Demo Link: https://drive.google.com/file/d/1M-7h61in1yWSwgUC2TwmDmMPuwNBEyc3/view?usp=sharing
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
  */

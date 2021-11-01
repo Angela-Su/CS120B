@@ -7,7 +7,7 @@
  *	when the photoresistor is exposed to light, and the lowest ADC value displayed (MIN) when 
  *	the photoresistor is deprived of all light. These values will be used for the remaining 
  *	lab exercises.
-
+ *	Demo Link: https://drive.google.com/file/d/1MDpLPurdBgVPmRHbiweb1EbVaXupvfnJ/view?usp=sharing
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
  */

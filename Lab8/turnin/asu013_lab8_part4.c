@@ -1,12 +1,12 @@
 /*	Author: Angela
  *  Partner(s) Name: 
  *	Lab Section:022
- *	Assignment: Lab 8  Exercise 3
- *	Exercise Description: Design a system where an LED is illuminated only if enough light is 
- *	detected from the photo resistor. Criteria:
- *	If the result of the ADC is >= MAX/2, the LED is illuminated.
- *	If the result of the ADC is < MAX/2, the LED is turned off.
-
+ *	Assignment: Lab 8  Exercise 4
+ *	Exercise Description: Design a system, using a bank of eight LEDs, where the number of LEDs illuminated is a representation 
+ *	of how much light is detected. For example, when more light is detected, more LEDs are illuminated. 
+ *	Criteria: The LEDs should illuminated in sequence from 0 to 7, based on the amount of light detected by the photoresistor.
+ *
+ *	Demo Link:
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
  */
@@ -17,6 +17,7 @@
 
 void ADC_init(){
 	ADCSRA |= (1 << ADEN) | (1 << ADSC) | (1 << ADATE);
+}
 
 int main(void) {
     /* Insert DDR and PORT initializations */

@@ -16,7 +16,7 @@
 #endif
 
 void ADC_init(){
-	ADCSRA |= (1 << ADEN) | (1 << ADEN) | (1 << ADATE);
+	ADCSRA |= (1 << ADEN) | (1 << ADSC) | (1 << ADATE);
 }
 
 int main(void) {

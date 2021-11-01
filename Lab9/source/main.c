@@ -56,7 +56,7 @@ void PWM_off() {
 }
 
 unsigned char isOn = 0x00;
-enum State{Init, Off, N1, N2, N3, N4, N5, N6, N7, N8, Wait0, Wait1, Wait2, Wait3, Wait4, Wait5, Wait6, Wait7, Wait8} State;
+enum State{Init, Off, C4, D4, E4, F4, G4, A4, B4, C5, Wait0, Wait1, Wait2, Wait3, Wait4, Wait5, Wait6, Wait7, Wait8} State;
 void Tick_Func(){
         unsigned char temp = ~PINA & 0x07;
         if(temp == 0x01){
@@ -67,163 +67,163 @@ void Tick_Func(){
                 }
         }
         if(isOn == 0x01){
-        switch(SM_STATE){
-                case SM_Init:
-                        SM_STATE = SM_N1;
+        switch(State){
+                case Init:
+                        State = C4;
                         break;
-                case SM_Wait0:
+                case Wait0:
                         if(temp == 0x04){
-                                SM_STATE = SM_Wait0;
+                                State = Wait0;
                         } else {
-                                SM_STATE = SM_N1;
+                                State = C4;
                         }
                         break;
-                case SM_N1:
+                case C4:
                         if(temp == 0x02){
-                                SM_STATE = SM_Wait1;
+                                State = Wait1;
                         } else {
-                                SM_STATE = SM_N1;
+                                State = C4;
                         }
                         break;
-                case SM_Wait1:
+                case Wait1:
                         if(temp == 0x02 || temp == 0x04){
-                                SM_STATE = SM_Wait1;
+                                State = Wait1;
                         } else {
-                                SM_STATE = SM_N2;
+                                State = D4;
                         }
                         break;
-                case SM_N2:
+                case D4:
                         if(temp == 0x02){
-                                SM_STATE = SM_Wait2;
+                                State = Wait2;
                         } else if(temp == 0x04){
-                                SM_STATE = SM_Wait0;
+                                State = Wait0;
                         } else {
-                                SM_STATE = SM_N2;
+                                State = D4;
                         }
                         break;
-                case SM_Wait2:
+                case Wait2:
                         if(temp == 0x02 || temp == 0x04){
-                                SM_STATE = SM_Wait2;
+                                State = Wait2;
                         } else {
-                                SM_STATE = SM_N3;
+                                State = E4;
                         }
                         break;
-                case SM_N3:
+                case E4:
                         if(temp == 0x02){
-                                SM_STATE = SM_Wait3;
+                                State = Wait3;
                         } else if(temp == 0x04){
-                                SM_STATE = SM_Wait1;
+                                State = Wait1;
                         } else {
-                                SM_STATE = SM_N3;
+                                State = E4;
                         }
                         break;
-                case SM_Wait3:
+                case Wait3:
                         if(temp == 0x02 || temp == 0x04){
-                                SM_STATE = SM_Wait3;
+                                State = Wait3;
                         } else {
-                                SM_STATE = SM_N4;
+                                State = F4;
                         }
                         break;
-                case SM_N4:
+                case F4:
                         if(temp == 0x02){
-                                SM_STATE = SM_Wait4;
+                                State = Wait4;
                         } else if(temp == 0x04){
-                                SM_STATE = SM_Wait2;
+                                State = Wait2;
                         } else {
-                                SM_STATE = SM_N4;
+                                State = F4;
                         }
                         break;
-                case SM_Wait4:
+                case Wait4:
                         if(temp == 0x02 || temp == 0x04){
-                                SM_STATE = SM_Wait4;
+                                State = Wait4;
                         } else {
-                                SM_STATE = SM_N5;
+                                State = G4;
                         }
                         break;
-                case SM_N5:
+                case G4:
                         if(temp == 0x02){
-                                SM_STATE = SM_Wait5;
+                                State = Wait5;
                         } else if(temp == 0x04){
-                                SM_STATE = SM_Wait3;
+                                State = Wait3;
                         } else {
-                                SM_STATE = SM_N5;
+                                State = G4;
                         }
                         break;
-                case SM_Wait5:
+                case Wait5:
                         if(temp == 0x02 || temp == 0x04){
-                                SM_STATE = SM_Wait5;
+                                State = Wait5;
                         } else {
-                                SM_STATE = SM_N6;
+                                State = A4;
                         }
                         break;
-                case SM_N6:
+                case A4:
                         if(temp == 0x02){
-                                SM_STATE = SM_Wait6;
+                                State = Wait6;
                         } else if(temp == 0x04){
-                                SM_STATE = SM_Wait4;
+                                State = Wait4;
                         } else {
-                                SM_STATE = SM_N6;
+                                State = A4;
                         }
                         break;
-                case SM_Wait6:
+                case Wait6:
                         if(temp == 0x02 || temp == 0x04){
-                                SM_STATE = SM_Wait6;
+                                State = Wait6;
                         } else {
-                                SM_STATE = SM_N7;
+                                State = B4;
                         }
                         break;
-                case SM_N7:
+                case B4:
                         if(temp == 0x02){
-                                SM_STATE = SM_Wait7;
+                                State = Wait7;
                         } else if(temp == 0x04){
-                                SM_STATE = SM_Wait5;
+                                State = Wait5;
                         } else {
-                                SM_STATE = SM_N7;
+                                State = B4;
                         }
                         break;
-                case SM_Wait7:
+                case Wait7:
                         if(temp == 0x02 || temp == 0x04){
-                                SM_STATE = SM_Wait7;
+                                State = Wait7;
                         } else {
-                                SM_STATE = SM_N8;
+                                State = C5;
                         }
                         break;
-                case SM_N8:
+                case C5:
                         if(temp == 0x04){
-                                SM_STATE = SM_Wait6;
+                                State = Wait6;
                         } else {
-                                SM_STATE = SM_N8;
+                                State = C5;
                         }
                         break;
                 default:
-                        SM_STATE = SM_Init;
+                        State = Init;
                         break;
         }
-        switch(SM_STATE){
-                case SM_Init:
+        switch(State){
+                case Init:
                         break;
-                case SM_N1:
+                case C4:
                         set_PWM(261.63);
                         break;
-                case SM_N2:
+                case D4:
                         set_PWM(293.66);
                         break;
-                case SM_N3:
+                case E4:
                         set_PWM(329.63);
                         break;
-                case SM_N4:
+                case F4:
                         set_PWM(349.23);
                         break;
-                case SM_N5:
+                case G4:
                         set_PWM(392);
                         break;
-                case SM_N6:
+                case A4:
                         set_PWM(440);
                         break;
-                case SM_N7:
+                case B4:
                         set_PWM(493.88);
                         break;
-                case SM_N8:
+                case C5:
                         set_PWM(523.25);
                         break;
                 default:
@@ -243,7 +243,7 @@ int main(void) {
         DDRB = 0x40; PORTB = 0x00;
     /* Insert your solution below */
         PWM_on();
-        SM_STATE = SM_Init;
+        State = Init;
     while (1) {
         Tick_Func();
     }

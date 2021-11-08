@@ -143,8 +143,8 @@ int main(void) {
     /* Insert DDR and PORT initializations */
         DDRB = 0xFF; PORTB = 0x00;
     /* Insert your solution below */
-	unsigned long StateM1 = 1000; //statemachines 1-3
-	unsigned long StateM2 = 1000;
+	    unsigned long StateM1 = 1000; //statemachines 1-3
+	    unsigned long StateM2 = 1000;
         unsigned long StateM3 = 200;
         const unsigned long timerPeriod = 200;
         TimerSet(timerPeriod);

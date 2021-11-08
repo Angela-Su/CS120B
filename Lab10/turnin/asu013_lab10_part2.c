@@ -108,10 +108,10 @@ void BlinkingLEDSM(){
         }
         switch(BlinkingLEDStates){
                 case S1:
-                        BlinkingLEDStates = 0x08;
+                        blinkingLED = 0x08;
                         break;
                 case S2:
-                        BlinkingLEDStates = 0x00;
+                        blinkingLED = 0x00;
                         break;
                 default:
                         break;
@@ -135,9 +135,9 @@ int main(void) {
     /* Insert DDR and PORT initializations */
         DDRB = 0xFF; PORTB = 0x00;
     /* Insert your solution below */
-        unsigned long SM1 = 300; //statemachines 1-3
-        unsigned long SM2 = 1000;
-        unsigned long SM3 = 100;
+        unsigned long StateM1 = 300; //statemachines 1-3
+        unsigned long StateM2 = 1000;
+        unsigned long StateM3 = 100;
         const unsigned long timerPeriod = 100;
         TimerSet(timerPeriod);
         TimerOn();
@@ -145,23 +145,23 @@ int main(void) {
         BlinkingLEDStates = S1;
         CombineStates = Output;
     while (1) {
-        if(SM1 >= 300){
+        if(StateM1 >= 300){
                 ThreeLEDsSM();
-                SM1 = 0;
+                StateM1 = 0;
         }
-        if(SM2 >= 1000){
+        if(StateM2 >= 1000){
                 BlinkingLEDSM();
-                SM2 = 0;
+                StateM2 = 0;
         }
-        if(SM3 >= 100){
+        if(StateM3 >= 100){
                 CombineLEDsSM();
-                SM3 = 0;
+                StateM3 = 0;
         }
         while(!TimerFlag);
         TimerFlag = 0;
-        SM1 += timerPeriod;
-        SM2 += timerPeriod;
-        SM3 += timerPeriod;
+        StateM1 += timerPeriod;
+        StateM2 += timerPeriod;
+        StateM3 += timerPeriod;
     }
     return 1;
 }

@@ -11,7 +11,7 @@
  *	In a third state machine (CombineLEDsSM), combine both shared variables and output to the 
  *	PORTB.
  *
- * Demo Link:
+ * Demo Link: https://drive.google.com/file/d/1NOSCezwLrzBPPoG0tBgmQHsl8fTUz1zj/view?usp=sharing
  * 
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
@@ -64,30 +64,30 @@ void TimerSet(unsigned long M)
 
 unsigned char threeLEDs = 0x00;
 int counter = 0;
-enum ThreeStates{Init, ST1, ST2, ST3, Restart} ThreeStates;
+enum ThreeStates{Init, State1, State2, State3, Restart} ThreeStates;
 void ThreeLEDsSM(){
         switch(ThreeStates){
-                case ST1:
-                        ThreeStates = ST2;
+                case State1:
+                        ThreeStates = State2;
                         break;
-                case ST2:
-                        ThreeStates = ST3;
+                case State2:
+                        ThreeStates = State3;
                         break;
-                case ST3:
-                        ThreeStates = ST1;
+                case State3:
+                        ThreeStates = State1;
                         break;
                 default:
-                        ThreeStates = ST1;
+                        ThreeStates = State1;
                         break;
         }
         switch(ThreeStates){
-                case ST1:
+                case State1:
                         threeLEDs = 0x01;
                         break;
-                case ST2:
+                case State2:
                         threeLEDs = 0x02;
                         break;
-                case ST3:
+                case State3:
                         threeLEDs = 0x04;
                         break;
                 case Restart:
@@ -149,7 +149,7 @@ int main(void) {
         const unsigned long timerPeriod = 200;
         TimerSet(timerPeriod);
         TimerOn();
-        ThreeStates = ST1;
+        ThreeStates = State1;
         BlinkingLEDStates = S1;
         CombineStates = Output;
     while (1) {

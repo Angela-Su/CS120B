@@ -7,6 +7,9 @@
  *	timer abstraction, the fastest you'll be able to pulse is 1 ms on and 1 ms off, meaning 
  *	500 Hz. 
  *
+ * 
+ * Demo Link: https://drive.google.com/file/d/1bWpphRTAQ4UAOGABwH7dKFZJATkMAO15/view?usp=sharing
+ * 
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
  */
@@ -59,30 +62,30 @@ void TimerSet(unsigned long M)
 int soundFreq = 0;
 unsigned char threeLEDs = 0x00;
 int counter = 0;
-enum ThreeStates{Init, ST1, ST2, ST3, Restart} ThreeStates;
+enum ThreeStates{Init, State1, State2, State3, Restart} ThreeStates;
 void ThreeLEDsSM(){
         switch(ThreeStates){
-                case ST1:
-                        ThreeStates = ST2;
+                case State1:
+                        ThreeStates = State2;
                         break;
-                case ST2:
-                        ThreeStates = ST3;
+                case State2:
+                        ThreeStates = State3;
                         break;
-                case ST3:
-                        ThreeStates = ST1;
+                case State3:
+                        ThreeStates = State1;
                         break;
                 default:
-                        ThreeStates = ST1;
+                        ThreeStates = State1;
                         break;
         }
         switch(ThreeStates){
-                case ST1:
+                case State1:
                         threeLEDs = 0x01;
                         break;
-                case ST2:
+                case State2:
                         threeLEDs = 0x02;
                         break;
-                case ST3:
+                case State3:
                         threeLEDs = 0x04;
                         break;
                 case Restart:
@@ -93,7 +96,7 @@ void ThreeLEDsSM(){
         }
 }
 
-unsigned char SOUNDER = 0x00;
+unsigned char SOUNDESet = 0x00;
 int time = 0;
 unsigned char blinkingLED = 0x00;
 enum BlinkingLEDStates{Start, S1, Wait2, S2, Wait3} BlinkingLEDStates;
@@ -125,7 +128,7 @@ enum COMS{Input, Output} CombineStates;
 void CombineLEDsSM(){
         switch(CombineStates){
                 case Output:
-                        PORTB = threeLEDs | blinkingLED | SOUNDER;
+                        PORTB = threeLEDs | blinkingLED | SOUNDESet;
                         CombineStates = Output;
                 default:
                         CombineStates = Output;
@@ -169,24 +172,24 @@ void Tick(){
         switch(SOUND){
                 case Wait:
                         center = 0;
-                        SOUNDER = 0x00;
+                        SOUNDESet = 0x00;
                         break;
                 case Press1:
-                        SOUNDER = 0x10;
+                        SOUNDESet = 0x10;
                         break;
                 case Press2:
-                        SOUNDER = 0x00;
+                        SOUNDESet = 0x00;
                         break;
                 default:
                         break;
         }
 }
 
-enum SOUND2S{Soundy, IncPress, DecPress} SOUND2;
+enum SOUND2S{SoundState, IncPress, DecPress} SOUND2;
 void Sounds_Func(){
         unsigned temp2 = ~PINA & 0x03;
         switch(SOUND2){
-                case Soundy:
+                case SoundState:
                         if((temp2 == 0x02) && (soundFreq < 7)){
                                 soundFreq++;
                                 SOUND2 = IncPress;
@@ -194,21 +197,21 @@ void Sounds_Func(){
                                 soundFreq--;
                                 SOUND2 = DecPress;
                         } else {
-                                SOUND2 = Soundy;
+                                SOUND2 = SoundState;
                         }
                         break;
                 case IncPress:
                         if(temp2 == 0x02){
                                 SOUND2 = IncPress;
                         } else {
-                                SOUND2 = Soundy;
+                                SOUND2 = SoundState;
                         }
                         break;
                 case DecPress:
                         if(temp2 == 0x01){
                                 SOUND2 = DecPress;
                         } else {
-                                SOUND2 = Soundy;
+                                SOUND2 = SoundState;
                         }
                         break;
                 default:
@@ -229,11 +232,11 @@ int main(void) {
         const unsigned long timerPeriod = 1;
         TimerSet(timerPeriod);
         TimerOn();
-        ThreeStates = ST1;
+        ThreeStates = State1;
         BlinkingLEDStates = S1;
         CombineStates = Output;
         SOUND = Wait;
-        SOUND2 = Soundy;
+        SOUND2 = SoundState;
     while (1) {
         if(StateM1 >= 300){
                 ThreeLEDsSM();

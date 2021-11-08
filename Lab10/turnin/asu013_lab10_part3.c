@@ -7,6 +7,9 @@
  *	and off for 2 ms as long as a switch on PA2 is in the on position. Don’t use the PWM for 
  *	this task.
  *
+ * 
+ * Demo Link: https://drive.google.com/file/d/1bnYKUOImaLjBSrXR3zdZIpJG3c4qLr-h/view?usp=sharing
+ * 
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
  */
@@ -58,30 +61,30 @@ void TimerSet(unsigned long M)
 
 unsigned char threeLEDs = 0x00;
 int counter = 0;
-enum ThreeStates{Init, ST1, ST2, ST3, Restart} ThreeStates;
+enum ThreeStates{Init, State1, State2, State3, Restart} ThreeStates;
 void ThreeLEDsSM(){
         switch(ThreeStates){
-                case ST1:
-                        ThreeStates = ST2;
+                case State1:
+                        ThreeStates = State2;
                         break;
-                case ST2:
-                        ThreeStates = ST3;
+                case State2:
+                        ThreeStates = State3;
                         break;
-                case ST3:
-                        ThreeStates = ST1;
+                case State3:
+                        ThreeStates = State1;
                         break;
                 default:
-                        ThreeStates = ST1;
+                        ThreeStates = State1;
                         break;
         }
         switch(ThreeStates){
-                case ST1:
+                case State1:
                         threeLEDs = 0x01;
                         break;
-                case ST2:
+                case State2:
                         threeLEDs = 0x02;
                         break;
-                case ST3:
+                case State3:
                         threeLEDs = 0x04;
                         break;
                 case Restart:
@@ -132,7 +135,7 @@ void CombineLEDsSM(){
         }
 }
 
-unsigned char SOUNDER = 0x00;
+unsigned char SOUNDSet = 0x00;
 enum SOUNDS {Wait, Press1, Press2} SOUND;
 void Tick(){
         unsigned char temp = ~PINA & 0x04;
@@ -164,13 +167,13 @@ void Tick(){
         }
         switch(SOUND){
                 case Wait:
-                        SOUNDER = 0x00;
+                        SOUNDSet = 0x00;
                         break;
                 case Press1:
-                        SOUNDER = 0x10;
+                        SOUNDSet = 0x10;
                         break;
                 case Press2:
-                        SOUNDER = 0x00;
+                        SOUNDSet = 0x00;
                         break;
                 default:
                         break;
@@ -188,7 +191,7 @@ int main(void) {
         const unsigned long timerPeriod = 2;
         TimerSet(timerPeriod);
         TimerOn();
-        ThreeStates = ST1;
+        ThreeStates = State1;
         BlinkingLEDStates = S1;
         CombineStates = Output;
         SOUND = Wait;

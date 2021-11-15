@@ -2,9 +2,10 @@
  *  Partner(s) Name: 
  *	Lab Section: 022
  *	Assignment: Lab #11  Exercise #1
- *	Exercise Description: Modify the keypad code to be in an SM task. Then, modify the keypad 
- *	SM to utilize the simple task scheduler format. All code from here on out should use the 
- *	task scheduler. 
+ *	Exercise Description: Use the LCD* code, along with a button and/or time delay to 
+ *  display the message "CS120B is Legend... wait for it DARY!" The string will not fit 
+ *  on the display all at once, so you will need to come up with some way to paginate 
+ *  or scroll the text.
  *
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
@@ -15,6 +16,7 @@
 #include "simAVRHeader.h"
 #include "header/bit.h"
 #include "header/io.h"
+#include "io.h"
 #include "header/keypad.h"
 #include "header/lcd_8bit_task.h"
 #include "header/queue.h"
@@ -25,90 +27,7 @@
 #include "header/usart.h"
 #endif
 
-unsigned char led0_output = 0x00;
-unsigned char led1_output = 0x00;
-unsigned char pause = 0;
-
-enum pauseButtonSM_States{pauseButton_wait, pauseButton_press, pauseButton_release};
-int pauseButtonSMTick(int state){
-    unsigned char press = ~PINA & 0x01;
-
-    switch(state){
-        case pauseButton_wait :
-            state = press == 0x01? pauseButton_press : pauseButton_wait;
-            break;
-        case pauseButton_press :
-            state = pauseButton_release;
-            break;
-        case pauseButton_release :
-            state = press == 0x00? pauseButton_wait : pauseButton_press;
-            break;
-        default:
-            state = pauseButton_wait;
-            break;
-    }
-    switch (state){
-        case pauseButton_wait :
-            break;
-        case pauseButton_press :
-            pause = (pause == 0)? 1 : 0;
-            break;
-        case pauseButton_release :
-        default:
-            break;
-    }
-    return state;
-}
-
-enum toggleLED0_States{toggleLED0_wait, toggleLED0_blink};
-int toggleLED0SMTick(int state){
-    switch(state){
-        case toggleLED0_wait : 
-            state = !pause? toggleLED0_blink : toggleLED0_wait;
-            break;
-        case toggleLED0_blink :
-            state = pause? toggleLED0_wait : toggleLED0_blink;
-        default:
-            state = toggleLED0_wait;
-            break;
-    }
-    switch(state){
-        case toggleLED0_wait :
-            break;
-        case toggleLED0_blink :
-            led0_output = (led0_output == 0x00) ? 0x01 : 0x00;
-            break;
-        default:
-            break;
-    }
-    return state;
-}
-
-enum toggleLED1_States{toggleLED1_wait, toggleLED1_blink};
-int toggleLED1SMTick(int state){
-    switch(state){
-        case toggleLED1_wait : 
-            state = !pause? toggleLED1_blink : toggleLED1_wait;
-            break;
-        case toggleLED1_blink :
-            state = pause? toggleLED1_wait : toggleLED1_blink;
-        default:
-            state = toggleLED1_wait;
-            break;
-    }
-    switch(state){
-        case toggleLED1_wait :
-            break;
-        case toggleLED1_blink :
-            led1_output = (led1_output == 0x00) ? 0x01 : 0x00;
-            break;
-        default:
-            break;
-    }
-    return state;
-}
-
-enum display_States{display_display};
+/*enum display_States{display_display};
 int displaySMTick(int state){
     unsigned char output;
     switch(state){
@@ -127,9 +46,34 @@ int displaySMTick(int state){
     }
     PORTB = output;
     return state;
+}*/
+enum displayTick{start, display}states;
+unsigned char MSGarr[16];
+char* msg = "CS120B is Legend... wait for it DARY!";
+void displayMSGTick(){
+    unsigned char counter = 0;
+    switch(states){
+        case start:
+        case display:
+        default:
+            states = display;
+            break;
+    }
+    switch(states){
+        case start:
+            break;
+        case display:
+            for (int i = 0; i < 16; i++) {
+		        MSGarr[i] = msg[(counter+i) % 38];
+	        }
+	        counter = (counter+1) % 38;
+	        LCD_DisplayString(1, MSGarr);
+            break;
+    }
+	return states;
 }
 
-enum GetKey{key};
+/*enum GetKey{key};
 int GetKeyTick(int state){
     unsigned char x;
     x = GetKeypadKey();
@@ -160,13 +104,14 @@ int GetKeyTick(int state){
     }
     return state;
 }
+*/
 
 int main(void) {
     /* Insert DDR and PORT initializations */
     DDRA = 0x00; PORTA = 0xFF;
     DDRB = 0xFF; PORTB = 0x00;
     /* Insert your solution below */
-    static task task1, task2, task3, task4, task5;
+    /*static task task1, task2, task3, task4, task5;
     task *task[] = {&task1, &task2, &task3, &task4, &task5};
     const unsigned short numTasks = sizeof(tasks)/sizeof(task*);
     const char start = -1;
@@ -194,10 +139,21 @@ int main(void) {
     task5.state = start;
     task5.period = 100;
     task5.elapsedTime = task5.period;
-    task5.TickFct = &GetKeyTick;
+    task5.TickFct = &GetKeyTick;*/
+
+    static task task1;
+    task *task[] = {&task1};
+    const unsigned short numTasks = sizeof(tasks)/sizeof(task*);
+    const char start = -1;
+
+    task1.state = start;
+    task1.period = 50;
+    task1.elapsedTime = task1.period;
+    task1.TickFct = &displayMSGTick;
 
     TimerSet(1);
     TimerOn();
+    LCD_init();
 
     unsigned short i;
     while (1) {

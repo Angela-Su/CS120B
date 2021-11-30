@@ -196,7 +196,7 @@ int main(void) {
     task5.elapsedTime = task5.period;
     task5.TickFct = &GetKeyTick;
 
-    TimerSet(1);
+    TimerSet(1); // could use GCD
     TimerOn();
 
     unsigned short i;

@@ -64,7 +64,7 @@ void displayMSGTick(){
             break;
         case display:
             for (int i = 0; i < 16; i++) {
-		        MSGarr[i] = msg[(counter+i) % 38];
+		        MSGarr[i] = msg[(counter+i) % 38]; //this should display the message a part at a time
 	        }
 	        counter = (counter+1) % 38;
 	        LCD_DisplayString(1, MSGarr);
@@ -151,7 +151,7 @@ int main(void) {
     task1.elapsedTime = task1.period;
     task1.TickFct = &displayMSGTick;
 
-    TimerSet(1);
+    TimerSet(1); //could use gcd
     TimerOn();
     LCD_init();
 
